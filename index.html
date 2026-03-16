@@ -3,372 +3,589 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MarineLearn AI — Concept 4: Blueprint</title>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>MarineLearn AI — Concept 2: Navigation Bridge</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
         :root{
-            --bg:#0B1426;
-            --bg2:#101D34;
-            --bg3:#162544;
-            --blue:#2E7DFF;
-            --blue-dim:rgba(46,125,255,.08);
-            --blue-mid:rgba(46,125,255,.15);
-            --blue-glow:rgba(46,125,255,.25);
-            --orange:#FF6B35;
-            --green:#10B981;
-            --red:#EF4444;
-            --yellow:#F59E0B;
-            --white:#EDF2F7;
-            --grey:#7C8DB5;
-            --muted:#4A5B7A;
-            --card:rgba(16,29,52,.7);
-            --border:rgba(46,125,255,.08);
-            --border2:rgba(46,125,255,.15);
+            --bg-primary:#0C0E14;
+            --bg-secondary:#12151E;
+            --bg-card:#181B27;
+            --bg-card-hover:#1E2233;
+            --accent-1:#4F9CF9;
+            --accent-2:#6C63FF;
+            --accent-3:#00D68F;
+            --accent-gradient:linear-gradient(135deg,#4F9CF9,#6C63FF);
+            --text-primary:#F0F2F5;
+            --text-secondary:#7B8494;
+            --text-muted:#4A5068;
+            --border-color:rgba(79,156,249,0.08);
+            --border-hover:rgba(79,156,249,0.2);
+            --glow:rgba(79,156,249,0.15);
         }
         html{scroll-behavior:smooth}
-        body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--white);overflow-x:hidden}
-        ::-webkit-scrollbar{width:5px}
-        ::-webkit-scrollbar-track{background:var(--bg)}
-        ::-webkit-scrollbar-thumb{background:var(--bg3);border-radius:5px}
+        body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg-primary);color:var(--text-primary);overflow-x:hidden;line-height:1.6}
+        ::-webkit-scrollbar{width:6px}
+        ::-webkit-scrollbar-track{background:var(--bg-primary)}
+        ::-webkit-scrollbar-thumb{background:var(--bg-card);border-radius:3px}
+        ::-webkit-scrollbar-thumb:hover{background:var(--accent-1)}
 
-        /* BLUEPRINT GRID BG */
-        .blueprint-bg{position:fixed;inset:0;z-index:0;opacity:.04;
-            background-image:
-                linear-gradient(var(--blue) 1px,transparent 1px),
-                linear-gradient(90deg,var(--blue) 1px,transparent 1px),
-                linear-gradient(rgba(46,125,255,.5) .5px,transparent .5px),
-                linear-gradient(90deg,rgba(46,125,255,.5) .5px,transparent .5px);
-            background-size:100px 100px,100px 100px,20px 20px,20px 20px}
+        /* LOADER */
+        .loader{position:fixed;inset:0;background:var(--bg-primary);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:20px;z-index:10000;transition:opacity .6s}
+        .loader.hide{opacity:0;pointer-events:none}
+        .loader-ring{width:50px;height:50px;border:3px solid var(--border-color);border-top-color:var(--accent-1);border-radius:50%;animation:spin 1s linear infinite}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        .loader-text{font-size:13px;color:var(--text-secondary);letter-spacing:3px;text-transform:uppercase;font-weight:600}
+
+        /* GRID BG */
+        .grid-bg{position:fixed;inset:0;z-index:0;opacity:.03;
+            background-image:linear-gradient(var(--accent-1) 1px,transparent 1px),linear-gradient(90deg,var(--accent-1) 1px,transparent 1px);
+            background-size:60px 60px}
 
         /* NAV */
-        .nav{position:fixed;top:0;left:0;right:0;z-index:1000;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 40px;background:rgba(11,20,38,.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
-        .nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none}
-        .nav-logo-box{width:34px;height:34px;border:2px solid var(--blue);border-radius:6px;display:flex;align-items:center;justify-content:center;position:relative}
-        .nav-logo-box::before{content:'';position:absolute;width:18px;height:18px;border:1.5px solid var(--orange);border-radius:50%}
-        .nav-logo-box::after{content:'';position:absolute;width:6px;height:6px;background:var(--blue);border-radius:50%}
-        .nav-brand{font-size:18px;font-weight:800}
-        .nav-brand span{color:var(--blue)}
-        .n-links{display:flex;gap:28px;list-style:none;align-items:center}
-        .n-links a{text-decoration:none;color:var(--grey);font-size:14px;font-weight:500;transition:color .3s}
-        .n-links a:hover{color:var(--blue)}
-        .n-cta{padding:9px 22px;background:var(--blue);color:white;border-radius:8px;font-weight:700;font-size:13px;text-decoration:none;transition:all .3s;border:none;cursor:pointer}
-        .n-cta:hover{box-shadow:0 6px 20px var(--blue-glow);transform:translateY(-2px)}
+        .nav{position:fixed;top:0;left:0;right:0;z-index:1000;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 48px;background:rgba(12,14,20,.8);backdrop-filter:blur(20px);border-bottom:1px solid var(--border-color)}
+        .nav-brand{display:flex;align-items:center;gap:12px;text-decoration:none}
+        .nav-brand-icon{width:32px;height:32px;background:var(--accent-gradient);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px;color:white}
+        .nav-brand-text{font-weight:800;font-size:18px;color:var(--text-primary)}
+        .nav-brand-text span{background:var(--accent-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .nav-menu{display:flex;gap:28px;list-style:none}
+        .nav-menu a{text-decoration:none;color:var(--text-secondary);font-size:14px;font-weight:500;transition:color .3s;position:relative}
+        .nav-menu a:hover{color:var(--accent-1)}
+        .nav-menu a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:2px;background:var(--accent-gradient);transition:width .3s;border-radius:2px}
+        .nav-menu a:hover::after{width:100%}
+        .nav-start{padding:8px 24px;background:var(--accent-gradient);color:white;border:none;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;transition:all .3s;text-decoration:none}
+        .nav-start:hover{transform:translateY(-2px);box-shadow:0 8px 25px var(--glow)}
 
         /* HERO */
-        .hero{min-height:100vh;display:flex;align-items:center;position:relative;z-index:1;padding:100px 40px 80px}
-        .hero-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:60px;max-width:1200px;margin:0 auto;width:100%;align-items:center}
-        .hero-overline{font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--orange);font-weight:600;letter-spacing:2px;margin-bottom:20px;display:flex;align-items:center;gap:8px}
-        .hero-overline::before{content:'//';color:var(--blue)}
-        .hero h1{font-size:50px;font-weight:900;line-height:1.12;margin-bottom:22px;letter-spacing:-.3px}
-        .hero h1 .bl{color:var(--blue)}
-        .hero h1 .or{color:var(--orange)}
-        .hero-p{font-size:17px;color:var(--grey);line-height:1.8;margin-bottom:36px;max-width:500px}
-        .hero-btns{display:flex;gap:12px;margin-bottom:40px}
-        .hb1{padding:14px 32px;background:var(--blue);color:white;border:none;border-radius:10px;font-weight:700;font-size:15px;cursor:pointer;transition:all .3s;text-decoration:none;display:inline-flex;align-items:center;gap:8px}
-        .hb1:hover{box-shadow:0 10px 30px var(--blue-glow);transform:translateY(-2px)}
-        .hb2{padding:14px 32px;background:transparent;color:var(--white);border:1.5px solid var(--border2);border-radius:10px;font-weight:600;font-size:15px;cursor:pointer;transition:all .3s;text-decoration:none}
-        .hb2:hover{border-color:var(--blue)}
-        .hero-stats{display:flex;gap:32px}
-        .h-stat .h-stat-num{font-family:'IBM Plex Mono',monospace;font-size:26px;font-weight:700;color:var(--blue)}
-        .h-stat .h-stat-lbl{font-size:12px;color:var(--muted);margin-top:2px}
+        .hero{min-height:100vh;display:flex;align-items:center;padding:100px 48px 60px;position:relative;z-index:1}
+        .hero-inner{display:grid;grid-template-columns:1fr 1fr;gap:80px;max-width:1300px;margin:0 auto;width:100%;align-items:center}
+        .hero-tag{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;background:rgba(79,156,249,.08);border:1px solid rgba(79,156,249,.15);border-radius:50px;font-size:12px;font-weight:600;color:var(--accent-1);margin-bottom:24px;letter-spacing:.5px}
+        .hero-tag .live-dot{width:6px;height:6px;background:var(--accent-3);border-radius:50%;animation:blink 2s infinite}
+        @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+        .hero h1{font-size:54px;font-weight:900;line-height:1.1;margin-bottom:20px;letter-spacing:-.5px}
+        .hero h1 .grad{background:var(--accent-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .hero-desc{font-size:17px;color:var(--text-secondary);line-height:1.8;margin-bottom:36px;max-width:480px}
+        .hero-btns{display:flex;gap:14px;margin-bottom:48px}
+        .hero-btn-1{display:inline-flex;align-items:center;gap:10px;padding:14px 32px;background:var(--accent-gradient);color:white;border:none;border-radius:12px;font-weight:700;font-size:15px;cursor:pointer;transition:all .3s;text-decoration:none;position:relative;overflow:hidden}
+        .hero-btn-1:hover{transform:translateY(-3px);box-shadow:0 12px 35px var(--glow)}
+        .hero-btn-2{display:inline-flex;align-items:center;gap:10px;padding:14px 32px;background:var(--bg-card);color:var(--text-primary);border:1px solid var(--border-hover);border-radius:12px;font-weight:600;font-size:15px;cursor:pointer;transition:all .3s;text-decoration:none}
+        .hero-btn-2:hover{border-color:var(--accent-1);background:var(--bg-card-hover)}
+        .hero-metrics{display:flex;gap:36px}
+        .metric{text-align:left}
+        .metric-num{font-size:28px;font-weight:900;background:var(--accent-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .metric-label{font-size:13px;color:var(--text-muted);font-weight:500}
 
-        /* HERO TERMINAL */
-        .terminal{background:var(--bg2);border:1px solid var(--border2);border-radius:16px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.4)}
-        .term-bar{padding:14px 18px;background:rgba(0,0,0,.2);display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border)}
-        .term-dot{width:10px;height:10px;border-radius:50%}
-        .td-r{background:#FF5F57}
-        .td-y{background:#FEBC2E}
-        .td-g{background:#28C840}
-        .term-title{margin-left:12px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted)}
-        .term-body{padding:20px;font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:2}
-        .term-line{display:flex;gap:8px;margin-bottom:4px}
-        .term-prompt{color:var(--blue);font-weight:600;min-width:fit-content}
-        .term-cmd{color:var(--white)}
-        .term-output{color:var(--grey);padding-left:24px}
-        .term-success{color:var(--green)}
-        .term-warn{color:var(--yellow)}
-        .term-highlight{color:var(--orange)}
-        .cursor-blink{display:inline-block;width:8px;height:14px;background:var(--blue);animation:curBlink 1s step-end infinite;vertical-align:middle;margin-left:4px}
-        @keyframes curBlink{0%,100%{opacity:1}50%{opacity:0}}
+        /* HERO DASHBOARD */
+        .hero-dashboard{position:relative}
+        .dash-card{background:var(--bg-card);border:1px solid var(--border-color);border-radius:20px;padding:0;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+        .dash-header{padding:20px 24px;border-bottom:1px solid var(--border-color);display:flex;align-items:center;justify-content:space-between}
+        .dash-dots{display:flex;gap:6px}
+        .dash-dot{width:10px;height:10px;border-radius:50%}
+        .dash-dot:nth-child(1){background:#FF5F56}
+        .dash-dot:nth-child(2){background:#FFBD2E}
+        .dash-dot:nth-child(3){background:#27C93F}
+        .dash-tab-bar{display:flex;gap:0}
+        .dash-tab{padding:6px 14px;font-size:11px;font-weight:600;color:var(--text-muted);border-radius:6px;cursor:pointer;transition:all .2s}
+        .dash-tab.active{background:rgba(79,156,249,.1);color:var(--accent-1)}
+        .dash-body{padding:24px}
+        .dash-subject-row{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:12px;margin-bottom:8px;transition:all .3s;cursor:pointer}
+        .dash-subject-row:hover{background:var(--bg-card-hover)}
+        .dash-subject-icon{width:40px;height:40px;min-width:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px}
+        .dsi-1{background:rgba(79,156,249,.12)}
+        .dsi-2{background:rgba(0,214,143,.12)}
+        .dsi-3{background:rgba(108,99,255,.12)}
+        .dsi-4{background:rgba(255,179,0,.12)}
+        .dsi-5{background:rgba(255,95,86,.12)}
+        .dash-subject-info{flex:1}
+        .dash-subject-name{font-size:14px;font-weight:700;margin-bottom:2px}
+        .dash-subject-meta{font-size:11px;color:var(--text-muted)}
+        .dash-progress-mini{width:80px}
+        .dash-prog-bar{width:100%;height:4px;background:rgba(255,255,255,.05);border-radius:4px;overflow:hidden}
+        .dash-prog-fill{height:100%;border-radius:4px;transition:width 2s ease}
+        .dpf-1{background:var(--accent-1);width:0}
+        .dpf-2{background:var(--accent-3);width:0}
+        .dpf-3{background:var(--accent-2);width:0}
+        .dpf-4{background:#FFB300;width:0}
+        .dpf-5{background:#FF5F56;width:0}
+        .dash-prog-label{font-size:10px;color:var(--text-muted);text-align:right;margin-top:3px}
+
+        /* Floating badges around dashboard */
+        .float-badge{position:absolute;background:var(--bg-card);border:1px solid var(--border-color);border-radius:14px;padding:12px 18px;display:flex;align-items:center;gap:10px;font-size:13px;font-weight:600;box-shadow:0 10px 30px rgba(0,0,0,.3);z-index:5}
+        .fb-1{top:-20px;right:-30px;animation:floatBadge1 5s ease-in-out infinite}
+        .fb-2{bottom:40px;left:-40px;animation:floatBadge2 6s ease-in-out infinite}
+        .fb-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px}
+        @keyframes floatBadge1{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+        @keyframes floatBadge2{0%,100%{transform:translateY(0)}50%{transform:translateY(10px)}}
 
         /* SECTIONS */
-        .sec{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:80px 40px}
-        .sec-head{margin-bottom:56px}
-        .sec-tag{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;color:var(--orange);letter-spacing:2px;margin-bottom:10px;display:flex;align-items:center;gap:6px}
-        .sec-tag::before{content:'#';color:var(--blue)}
-        .sec-h{font-size:36px;font-weight:900;margin-bottom:10px}
-        .sec-sub{font-size:15px;color:var(--grey);max-width:480px}
+        .section{position:relative;z-index:1;max-width:1300px;margin:0 auto;padding:100px 48px}
+        .section-header{text-align:center;margin-bottom:64px}
+        .section-tag{font-size:12px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--accent-1);margin-bottom:12px}
+        .section-title{font-size:40px;font-weight:900;margin-bottom:14px}
+        .section-desc{font-size:16px;color:var(--text-secondary);max-width:500px;margin:0 auto}
 
-        /* SEMESTER GRID */
-        .sg{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
-        .sc{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px 22px;cursor:pointer;transition:all .4s;position:relative;overflow:hidden;backdrop-filter:blur(8px)}
-        .sc:hover{border-color:var(--border2);transform:translateY(-6px);box-shadow:0 16px 40px rgba(0,0,0,.25)}
-        .sc-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px}
-        .sc-num{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;color:var(--blue);background:var(--blue-dim);padding:4px 10px;border-radius:6px}
-        .sc-emoji{font-size:24px}
-        .sc-name{font-size:16px;font-weight:700;margin-bottom:4px}
-        .sc-desc{font-size:12px;color:var(--muted);margin-bottom:14px}
-        .sc-bar{width:100%;height:3px;background:rgba(255,255,255,.04);border-radius:3px;overflow:hidden}
-        .sc-fill{height:100%;background:var(--blue);border-radius:3px;transition:width 2s ease}
-        .sc-pct{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);margin-top:5px;text-align:right}
+        /* SEMESTERS */
+        .sem-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+        .sem-card{background:var(--bg-card);border:1px solid var(--border-color);border-radius:16px;padding:24px;cursor:pointer;transition:all .4s;position:relative;overflow:hidden}
+        .sem-card:hover{border-color:var(--border-hover);transform:translateY(-6px);box-shadow:0 16px 40px rgba(0,0,0,.2)}
+        .sem-card::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent-gradient);opacity:0;transition:opacity .3s}
+        .sem-card:hover::after{opacity:1}
+        .sem-num{font-family:'Space Mono',monospace;font-size:42px;font-weight:700;background:var(--accent-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;opacity:.15;position:absolute;top:12px;right:16px;line-height:1}
+        .sem-icon-wrap{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;font-size:20px}
+        .si-1{background:rgba(79,156,249,.1)}
+        .si-2{background:rgba(0,214,143,.1)}
+        .si-3{background:rgba(108,99,255,.1)}
+        .si-4{background:rgba(255,179,0,.1)}
+        .si-5{background:rgba(255,95,86,.1)}
+        .si-6{background:rgba(79,156,249,.1)}
+        .si-7{background:rgba(0,214,143,.1)}
+        .si-8{background:rgba(108,99,255,.1)}
+        .sem-label{font-size:11px;color:var(--text-muted);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
+        .sem-name{font-size:16px;font-weight:700;margin-bottom:6px}
+        .sem-sub-count{font-size:12px;color:var(--text-secondary);margin-bottom:16px}
+        .sem-prog-wrap{display:flex;align-items:center;gap:10px}
+        .sem-prog{flex:1;height:4px;background:rgba(255,255,255,.04);border-radius:4px;overflow:hidden}
+        .sem-prog-bar{height:100%;background:var(--accent-gradient);border-radius:4px;transition:width 2s ease}
+        .sem-prog-pct{font-size:11px;font-weight:700;color:var(--accent-1);min-width:30px;text-align:right}
 
         /* FEATURES */
-        .fg{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
-        .fc{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;display:flex;gap:20px;transition:all .4s;backdrop-filter:blur(8px)}
-        .fc:hover{border-color:var(--border2);transform:translateY(-4px)}
-        .fc-icon{width:48px;height:48px;min-width:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px}
-        .fci-1{background:var(--blue-dim)}
-        .fci-2{background:rgba(16,185,129,.08)}
-        .fci-3{background:rgba(255,107,53,.08)}
-        .fci-4{background:rgba(245,158,11,.08)}
-        .fc-title{font-size:16px;font-weight:700;margin-bottom:6px}
-        .fc-desc{font-size:13px;color:var(--grey);line-height:1.7}
+        .feat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+        .feat-card{background:var(--bg-card);border:1px solid var(--border-color);border-radius:20px;padding:36px;display:flex;gap:24px;transition:all .4s;cursor:default}
+        .feat-card:hover{border-color:var(--border-hover);transform:translateY(-4px);box-shadow:0 12px 30px rgba(0,0,0,.15)}
+        .feat-icon{width:56px;height:56px;min-width:56px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px}
+        .fi-1{background:rgba(79,156,249,.1)}
+        .fi-2{background:rgba(0,214,143,.1)}
+        .fi-3{background:rgba(108,99,255,.1)}
+        .fi-4{background:rgba(255,179,0,.1)}
+        .feat-title{font-size:18px;font-weight:700;margin-bottom:8px}
+        .feat-desc{font-size:14px;color:var(--text-secondary);line-height:1.7}
 
-        /* CHAPTER DEMO */
-        .demo{background:var(--card);border:1px solid var(--border);border-radius:20px;overflow:hidden;backdrop-filter:blur(8px)}
-        .demo-bar{padding:16px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-        .demo-bc{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted)}
-        .demo-bc b{color:var(--blue)}
-        .demo-ok{padding:7px 16px;background:rgba(16,185,129,.08);color:var(--green);border:1px solid rgba(16,185,129,.12);border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;font-family:'IBM Plex Mono',monospace}
-        .demo-grid{display:grid;grid-template-columns:1fr 280px}
-        .demo-main{padding:28px;border-right:1px solid var(--border)}
-        .demo-title{font-size:26px;font-weight:900;margin-bottom:8px}
-        .demo-meta{display:flex;gap:16px;margin-bottom:24px;font-size:12px;color:var(--muted);font-family:'IBM Plex Mono',monospace}
-        .demo-tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:22px}
-        .dtab{padding:12px 20px;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .3s;background:none;border-top:0;border-left:0;border-right:0}
-        .dtab.on{color:var(--blue);border-bottom-color:var(--blue)}
-        .dtab:hover{color:var(--white)}
-        .dtc{display:none;animation:fu .4s}
-        .dtc.on{display:block}
-        @keyframes fu{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-        .sp{font-size:15px;line-height:1.9;color:rgba(237,242,247,.75)}
-        .sp .h{color:var(--blue);font-weight:700}
-        .s-box{margin-top:18px;padding:16px 20px;background:var(--blue-dim);border-left:3px solid var(--blue);border-radius:0 10px 10px 0;font-size:13px;color:var(--grey);line-height:1.8}
-        .s-box strong{color:var(--blue)}
-        .ki{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
-        .kc{width:18px;height:18px;min-width:18px;border:2px solid var(--muted);border-radius:5px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .3s;margin-top:3px}
-        .kc.on{background:var(--green);border-color:var(--green)}
-        .kc svg{width:11px;height:11px;stroke:white;fill:none;stroke-width:3;opacity:0}
-        .kc.on svg{opacity:1}
-        .kt{font-size:14px;line-height:1.7;color:rgba(237,242,247,.75)}
-        .kt b{color:var(--white)}
-        .qb{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:22px;margin-bottom:12px}
-        .qq{display:flex;gap:10px;margin-bottom:12px}
-        .qn{width:26px;height:26px;min-width:26px;background:var(--blue-dim);border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;color:var(--blue)}
-        .qt{font-size:14px;font-weight:600}
-        .qos{display:flex;flex-direction:column;gap:6px}
-        .qo{padding:11px 14px;background:rgba(0,0,0,.15);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .3s;font-size:13px;display:flex;align-items:center;gap:10px}
-        .qo:hover{border-color:var(--border2)}
-        .ol{width:22px;height:22px;min-width:22px;border:1.5px solid var(--muted);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;color:var(--muted);transition:all .3s}
-        .qo:hover .ol{border-color:var(--blue);color:var(--blue)}
-        .qo.y{border-color:var(--green);background:rgba(16,185,129,.04)}.qo.y .ol{background:var(--green);border-color:var(--green);color:white}
-        .qo.n{border-color:var(--red);background:rgba(239,68,68,.04)}.qo.n .ol{background:var(--red);border-color:var(--red);color:white}
+        /* CHAPTER PREVIEW */
+        .chap-preview{background:var(--bg-card);border:1px solid var(--border-color);border-radius:24px;overflow:hidden}
+        .chap-topbar{display:flex;align-items:center;justify-content:space-between;padding:18px 28px;border-bottom:1px solid var(--border-color)}
+        .chap-breadcrumb{font-size:12px;color:var(--text-muted)}
+        .chap-breadcrumb b{color:var(--accent-1)}
+        .chap-complete-btn{padding:8px 18px;background:rgba(0,214,143,.08);color:var(--accent-3);border:1px solid rgba(0,214,143,.15);border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;transition:all .3s}
+        .chap-complete-btn:hover{background:rgba(0,214,143,.15)}
+        .chap-layout{display:grid;grid-template-columns:1fr 300px}
+        .chap-content{padding:32px;border-right:1px solid var(--border-color)}
+        .chap-h{font-size:26px;font-weight:900;margin-bottom:8px}
+        .chap-meta{display:flex;gap:16px;margin-bottom:28px}
+        .chap-meta-item{font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:4px}
+        .chap-tabs{display:flex;gap:0;border-bottom:1px solid var(--border-color);margin-bottom:24px}
+        .ctab{padding:12px 20px;font-size:13px;font-weight:600;color:var(--text-muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .3s;background:none;border-top:0;border-left:0;border-right:0}
+        .ctab.on{color:var(--accent-1);border-bottom-color:var(--accent-1)}
+        .ctab:hover{color:var(--text-primary)}
+        .ctab-body{display:none;animation:fadeUp .4s ease}
+        .ctab-body.on{display:block}
+        @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+        .summary-p{font-size:15px;line-height:1.9;color:rgba(240,242,245,.8)}
+        .summary-p .hl{color:var(--accent-1);font-weight:700}
+        .summary-box{margin-top:20px;padding:18px 22px;background:rgba(79,156,249,.04);border-left:3px solid var(--accent-1);border-radius:0 12px 12px 0;font-size:13px;color:var(--text-secondary);line-height:1.8}
+        .summary-box strong{color:var(--accent-1)}
 
-        .demo-side{padding:24px}
-        .ds-h{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
-        .ai-b{background:var(--blue-dim);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:24px}
-        .ai-r{display:flex;gap:6px}
-        .ai-i{flex:1;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:9px 10px;color:var(--white);font-size:12px;font-family:'DM Sans',sans-serif;outline:none;transition:border .3s}
-        .ai-i:focus{border-color:var(--blue)}
-        .ai-i::placeholder{color:var(--muted)}
-        .ai-s{width:36px;height:36px;min-width:36px;background:var(--blue);border:none;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .3s}
-        .ai-s:hover{box-shadow:0 4px 15px var(--blue-glow)}
-        .ai-s svg{width:14px;height:14px;stroke:white;fill:none;stroke-width:2.5}
-        .ai-ans{margin-top:10px;padding:12px;background:var(--bg);border-radius:8px;font-size:12px;color:var(--grey);line-height:1.7;display:none;border-left:2px solid var(--blue)}
-        .ai-t{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;color:var(--blue);margin-bottom:4px;letter-spacing:1px}
-        .ci{padding:8px 10px;border-radius:6px;font-size:12px;display:flex;align-items:center;gap:8px;cursor:pointer;transition:all .2s;margin-bottom:2px;color:var(--muted)}
-        .ci:hover{background:var(--blue-dim);color:var(--white)}
-        .ci.now{background:rgba(46,125,255,.06);color:var(--blue);font-weight:600}
-        .ci.did{color:var(--green)}
-        .cn{font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:600;width:18px;min-width:18px}
+        .kp-item{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--border-color)}
+        .kp-check{width:20px;height:20px;min-width:20px;border:2px solid var(--text-muted);border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .3s;margin-top:2px}
+        .kp-check.done{background:var(--accent-3);border-color:var(--accent-3)}
+        .kp-check svg{width:12px;height:12px;stroke:white;fill:none;stroke-width:3;opacity:0}
+        .kp-check.done svg{opacity:1}
+        .kp-txt{font-size:14px;line-height:1.7;color:rgba(240,242,245,.8)}
+        .kp-txt b{color:var(--text-primary)}
+
+        .quiz-block{background:var(--bg-card-hover);border:1px solid var(--border-color);border-radius:16px;padding:24px;margin-bottom:16px}
+        .quiz-q{display:flex;gap:10px;margin-bottom:14px;align-items:flex-start}
+        .quiz-num{width:28px;height:28px;min-width:28px;border-radius:8px;background:rgba(79,156,249,.1);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--accent-1)}
+        .quiz-text{font-size:15px;font-weight:600}
+        .quiz-opts{display:flex;flex-direction:column;gap:8px}
+        .quiz-opt{padding:12px 16px;background:var(--bg-card);border:1px solid var(--border-color);border-radius:10px;cursor:pointer;transition:all .3s;font-size:13px;display:flex;align-items:center;gap:10px}
+        .quiz-opt:hover{border-color:var(--border-hover);background:rgba(79,156,249,.03)}
+        .opt-circle{width:24px;height:24px;min-width:24px;border:1.5px solid var(--text-muted);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--text-muted);transition:all .3s}
+        .quiz-opt:hover .opt-circle{border-color:var(--accent-1);color:var(--accent-1)}
+        .quiz-opt.right{border-color:var(--accent-3);background:rgba(0,214,143,.05)}
+        .quiz-opt.right .opt-circle{background:var(--accent-3);border-color:var(--accent-3);color:white}
+        .quiz-opt.nope{border-color:#FF5F56;background:rgba(255,95,86,.05)}
+        .quiz-opt.nope .opt-circle{background:#FF5F56;border-color:#FF5F56;color:white}
+
+        /* SIDEBAR */
+        .chap-side{padding:28px}
+        .side-label{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:14px}
+        .ai-box{background:rgba(79,156,249,.04);border:1px solid rgba(79,156,249,.1);border-radius:14px;padding:16px;margin-bottom:28px}
+        .ai-input-row{display:flex;gap:8px}
+        .ai-inp{flex:1;background:var(--bg-primary);border:1px solid var(--border-color);border-radius:8px;padding:10px 12px;color:var(--text-primary);font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;outline:none;transition:border .3s}
+        .ai-inp:focus{border-color:var(--accent-1)}
+        .ai-inp::placeholder{color:var(--text-muted)}
+        .ai-send{width:38px;height:38px;min-width:38px;background:var(--accent-gradient);border:none;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .3s}
+        .ai-send:hover{transform:scale(1.05);box-shadow:0 4px 15px var(--glow)}
+        .ai-send svg{width:16px;height:16px;stroke:white;fill:none;stroke-width:2}
+        .ai-reply{margin-top:12px;padding:14px;background:var(--bg-primary);border-radius:10px;font-size:13px;line-height:1.7;color:var(--text-secondary);display:none;border-left:2px solid var(--accent-1)}
+        .ai-reply-tag{font-size:10px;font-weight:700;color:var(--accent-1);margin-bottom:4px;letter-spacing:1px;text-transform:uppercase}
+
+        .ch-nav-item{padding:10px 12px;border-radius:8px;font-size:13px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:all .2s;margin-bottom:3px;color:var(--text-muted)}
+        .ch-nav-item:hover{background:rgba(79,156,249,.04);color:var(--text-primary)}
+        .ch-nav-item.now{background:rgba(79,156,249,.06);color:var(--accent-1);font-weight:600}
+        .ch-nav-item.did{color:var(--accent-3)}
+        .ch-n{font-size:11px;font-weight:700;width:22px;min-width:22px;text-align:center;font-family:'Space Mono',monospace}
+
+        /* STATS */
+        .stats-strip{background:var(--bg-card);border:1px solid var(--border-color);border-radius:20px;display:grid;grid-template-columns:repeat(4,1fr);max-width:1300px;margin:0 auto;position:relative;z-index:1}
+        .stat-box{padding:40px;text-align:center;border-right:1px solid var(--border-color)}
+        .stat-box:last-child{border:none}
+        .stat-val{font-size:38px;font-weight:900;background:var(--accent-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:4px}
+        .stat-lbl{font-size:13px;color:var(--text-secondary);font-weight:500}
 
         /* FOOTER */
-        .ft{background:rgba(8,14,26,.95);border-top:1px solid var(--border);position:relative;z-index:1}
-        .ft-inner{max-width:1200px;margin:0 auto;padding:48px 40px 24px;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:36px}
-        .ft-desc{font-size:13px;color:var(--muted);line-height:1.7;margin-top:12px;max-width:260px}
-        .ft-h{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--grey);margin-bottom:14px}
-        .ft-list{list-style:none}
-        .ft-list li{margin-bottom:8px}
-        .ft-list a{color:var(--muted);text-decoration:none;font-size:13px;transition:color .3s}
-        .ft-list a:hover{color:var(--blue)}
-        .ft-bot{max-width:1200px;margin:0 auto;padding:16px 40px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-size:11px;color:var(--muted);font-family:'IBM Plex Mono',monospace}
+        .footer{background:var(--bg-secondary);border-top:1px solid var(--border-color);margin-top:80px;position:relative;z-index:1}
+        .footer-inner{max-width:1300px;margin:0 auto;padding:60px 48px 30px;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px}
+        .footer-brand-desc{font-size:14px;color:var(--text-secondary);line-height:1.7;margin-top:16px;max-width:280px}
+        .footer-h{font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-primary);margin-bottom:18px}
+        .footer-list{list-style:none}
+        .footer-list li{margin-bottom:10px}
+        .footer-list a{color:var(--text-secondary);text-decoration:none;font-size:14px;transition:color .3s}
+        .footer-list a:hover{color:var(--accent-1)}
+        .footer-bottom{max-width:1300px;margin:0 auto;padding:20px 48px;border-top:1px solid var(--border-color);display:flex;justify-content:space-between;font-size:12px;color:var(--text-muted)}
 
-        .rv{opacity:0;transform:translateY(30px);transition:all .7s cubic-bezier(.4,0,.2,1)}
-        .rv.vis{opacity:1;transform:translateY(0)}
-        .r1{transition-delay:.05s}.r2{transition-delay:.1s}.r3{transition-delay:.15s}.r4{transition-delay:.2s}
-        .r5{transition-delay:.25s}.r6{transition-delay:.3s}.r7{transition-delay:.35s}.r8{transition-delay:.4s}
+        /* ANIMATIONS */
+        .anim{opacity:0;transform:translateY(30px);transition:all .7s cubic-bezier(.4,0,.2,1)}
+        .anim.show{opacity:1;transform:translateY(0)}
+        .d1{transition-delay:.1s}.d2{transition-delay:.2s}.d3{transition-delay:.3s}.d4{transition-delay:.4s}
+        .d5{transition-delay:.5s}.d6{transition-delay:.6s}.d7{transition-delay:.7s}.d8{transition-delay:.8s}
 
-        @media(max-width:1024px){.hero-grid{grid-template-columns:1fr}.terminal{max-width:520px}.sg{grid-template-columns:repeat(2,1fr)}.fg{grid-template-columns:1fr}.demo-grid{grid-template-columns:1fr}.demo-side{display:none}.ft-inner{grid-template-columns:repeat(2,1fr)}}
-        @media(max-width:768px){.nav{padding:0 20px}.n-links{display:none}.hero{padding:90px 20px 60px}.hero h1{font-size:32px}.hero-stats{flex-wrap:wrap;gap:20px}.sec{padding:60px 20px}.sec-h{font-size:28px}.sg{grid-template-columns:1fr}.ft-inner{grid-template-columns:1fr}.ft-bot{flex-direction:column;gap:8px;text-align:center}}
+        /* RESPONSIVE */
+        @media(max-width:1024px){
+            .hero-inner{grid-template-columns:1fr;gap:40px}
+            .hero-dashboard{max-width:500px}
+            .sem-grid{grid-template-columns:repeat(2,1fr)}
+            .feat-grid{grid-template-columns:1fr}
+            .chap-layout{grid-template-columns:1fr}
+            .chap-side{display:none}
+            .footer-inner{grid-template-columns:repeat(2,1fr)}
+        }
+        @media(max-width:768px){
+            .nav{padding:0 20px}
+            .nav-menu{display:none}
+            .hero{padding:90px 20px 40px}
+            .hero h1{font-size:34px}
+            .hero-metrics{flex-wrap:wrap;gap:20px}
+            .section{padding:60px 20px}
+            .section-title{font-size:28px}
+            .sem-grid{grid-template-columns:1fr}
+            .stats-strip{grid-template-columns:repeat(2,1fr)}
+            .stat-box{padding:28px;border-bottom:1px solid var(--border-color)}
+            .stat-box:nth-child(2){border-right:none}
+            .float-badge{display:none}
+            .footer-inner{grid-template-columns:1fr;gap:28px}
+            .footer-bottom{flex-direction:column;gap:8px;text-align:center}
+        }
     </style>
 </head>
 <body>
-    <div class="blueprint-bg"></div>
+    <div class="loader" id="loader">
+        <div class="loader-ring"></div>
+        <div class="loader-text">Charting Course...</div>
+    </div>
+
+    <div class="grid-bg"></div>
 
     <nav class="nav">
-        <a href="#" class="nav-logo"><div class="nav-logo-box"></div><div class="nav-brand">Marine<span>Learn</span></div></a>
-        <ul class="n-links">
-            <li><a href="#sem4">Semesters</a></li>
-            <li><a href="#feat4">Features</a></li>
-            <li><a href="#demo4">Demo</a></li>
-            <li><a href="#sem4" class="n-cta">Launch →</a></li>
+        <a href="#" class="nav-brand">
+            <div class="nav-brand-icon">M</div>
+            <div class="nav-brand-text">Marine<span>Learn</span></div>
+        </a>
+        <ul class="nav-menu">
+            <li><a href="#sems">Semesters</a></li>
+            <li><a href="#feats">Features</a></li>
+            <li><a href="#demo">Chapter Demo</a></li>
         </ul>
+        <a href="#sems" class="nav-start">Get Started →</a>
     </nav>
 
+    <!-- HERO -->
     <section class="hero">
-        <div class="hero-grid">
+        <div class="hero-inner">
             <div>
-                <div class="hero-overline">MARINE_ENGINEERING_v2.0</div>
-                <h1>Engineering Your Path Through <span class="bl">Marine</span> <span class="or">Mastery</span></h1>
-                <p class="hero-p">Structured chapter learning with AI assistance, practice quizzes, formula sheets, and DGS oral preparation for B.Tech Marine Engineering.</p>
+                <div class="hero-tag"><span class="live-dot"></span>AI-Powered Marine Learning</div>
+                <h1>Navigate Your <span class="grad">Marine Engineering</span> Journey</h1>
+                <p class="hero-desc">Smart chapter summaries, instant AI answers, practice quizzes, and DGS oral preparation — everything you need for B.Tech Marine Engineering success.</p>
                 <div class="hero-btns">
-                    <a href="#sem4" class="hb1">⚓ Start Learning</a>
-                    <a href="#demo4" class="hb2">View Demo</a>
+                    <a href="#sems" class="hero-btn-1">⚓ Start Learning</a>
+                    <a href="#demo" class="hero-btn-2">📖 See Demo</a>
                 </div>
-                <div class="hero-stats">
-                    <div class="h-stat"><div class="h-stat-num">500+</div><div class="h-stat-lbl">Chapters</div></div>
-                    <div class="h-stat"><div class="h-stat-num">5000+</div><div class="h-stat-lbl">Questions</div></div>
-                    <div class="h-stat"><div class="h-stat-num">50+</div><div class="h-stat-lbl">Subjects</div></div>
-                    <div class="h-stat"><div class="h-stat-num">8</div><div class="h-stat-lbl">Semesters</div></div>
+                <div class="hero-metrics">
+                    <div class="metric"><div class="metric-num">500+</div><div class="metric-label">Chapters</div></div>
+                    <div class="metric"><div class="metric-num">5000+</div><div class="metric-label">Questions</div></div>
+                    <div class="metric"><div class="metric-num">50+</div><div class="metric-label">Subjects</div></div>
+                    <div class="metric"><div class="metric-num">8</div><div class="metric-label">Semesters</div></div>
                 </div>
             </div>
+            <div class="hero-dashboard" style="position:relative">
+                <div class="float-badge fb-1">
+                    <div class="fb-icon" style="background:rgba(0,214,143,.1)">✅</div>
+                    <div><div style="font-size:11px;color:var(--text-muted)">Today</div><div>3 Chapters Done</div></div>
+                </div>
+                <div class="float-badge fb-2">
+                    <div class="fb-icon" style="background:rgba(108,99,255,.1)">🔥</div>
+                    <div><div style="font-size:11px;color:var(--text-muted)">Streak</div><div>12 Days</div></div>
+                </div>
+                <div class="dash-card">
+                    <div class="dash-header">
+                        <div class="dash-dots"><div class="dash-dot"></div><div class="dash-dot"></div><div class="dash-dot"></div></div>
+                        <div class="dash-tab-bar">
+                            <div class="dash-tab active">Semester 5</div>
+                            <div class="dash-tab">Progress</div>
+                        </div>
+                    </div>
+                    <div class="dash-body">
+                        <div class="dash-subject-row">
+                            <div class="dash-subject-icon dsi-1">🔧</div>
+                            <div class="dash-subject-info">
+                                <div class="dash-subject-name">Marine Diesel Engines - I</div>
+                                <div class="dash-subject-meta">10 Chapters • 25 hrs</div>
+                            </div>
+                            <div class="dash-progress-mini">
+                                <div class="dash-prog-bar"><div class="dash-prog-fill dpf-1" data-w="72"></div></div>
+                                <div class="dash-prog-label">72%</div>
+                            </div>
+                        </div>
+                        <div class="dash-subject-row">
+                            <div class="dash-subject-icon dsi-2">🚢</div>
+                            <div class="dash-subject-info">
+                                <div class="dash-subject-name">Naval Architecture - I</div>
+                                <div class="dash-subject-meta">10 Chapters • 22 hrs</div>
+                            </div>
+                            <div class="dash-progress-mini">
+                                <div class="dash-prog-bar"><div class="dash-prog-fill dpf-2" data-w="58"></div></div>
+                                <div class="dash-prog-label">58%</div>
+                            </div>
+                        </div>
+                        <div class="dash-subject-row">
+                            <div class="dash-subject-icon dsi-3">⚙️</div>
+                            <div class="dash-subject-info">
+                                <div class="dash-subject-name">Marine Aux Machinery - I</div>
+                                <div class="dash-subject-meta">9 Chapters • 20 hrs</div>
+                            </div>
+                            <div class="dash-progress-mini">
+                                <div class="dash-prog-bar"><div class="dash-prog-fill dpf-3" data-w="45"></div></div>
+                                <div class="dash-prog-label">45%</div>
+                            </div>
+                        </div>
+                        <div class="dash-subject-row">
+                            <div class="dash-subject-icon dsi-4">📡</div>
+                            <div class="dash-subject-info">
+                                <div class="dash-subject-name">Marine Electronics</div>
+                                <div class="dash-subject-meta">8 Chapters • 18 hrs</div>
+                            </div>
+                            <div class="dash-progress-mini">
+                                <div class="dash-prog-bar"><div class="dash-prog-fill dpf-4" data-w="30"></div></div>
+                                <div class="dash-prog-label">30%</div>
+                            </div>
+                        </div>
+                        <div class="dash-subject-row">
+                            <div class="dash-subject-icon dsi-5">🎛️</div>
+                            <div class="dash-subject-info">
+                                <div class="dash-subject-name">Control Systems</div>
+                                <div class="dash-subject-meta">8 Chapters • 16 hrs</div>
+                            </div>
+                            <div class="dash-progress-mini">
+                                <div class="dash-prog-bar"><div class="dash-prog-fill dpf-5" data-w="15"></div></div>
+                                <div class="dash-prog-label">15%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- STATS -->
+    <div style="padding:0 48px;position:relative;z-index:1">
+        <div class="stats-strip anim" id="statsStrip">
+            <div class="stat-box"><div class="stat-val" data-c="500">0</div><div class="stat-lbl">Chapters Covered</div></div>
+            <div class="stat-box"><div class="stat-val" data-c="5000">0</div><div class="stat-lbl">Practice Questions</div></div>
+            <div class="stat-box"><div class="stat-val" data-c="50">0</div><div class="stat-lbl">Subjects</div></div>
+            <div class="stat-box"><div class="stat-val" data-c="200">0</div><div class="stat-lbl">Oral Questions</div></div>
+        </div>
+    </div>
+
+    <!-- SEMESTERS -->
+    <section class="section" id="sems">
+        <div class="section-header anim">
+            <div class="section-tag">Your Curriculum</div>
+            <h2 class="section-title">Choose Your Semester</h2>
+            <p class="section-desc">8 semesters of structured marine engineering curriculum, from basics to DGS competency.</p>
+        </div>
+        <div class="sem-grid">
+            <div class="sem-card anim d1"><div class="sem-num">01</div><div class="sem-icon-wrap si-1">⚛️</div><div class="sem-label">Semester 1</div><div class="sem-name">Engineering Foundations</div><div class="sem-sub-count">7 Subjects</div><div class="sem-prog-wrap"><div class="sem-prog"><div class="sem-prog-bar" data-w="80" style="width:0"></div></div><div class="sem-prog-pct">80%</div></div></div>
+            <div class="sem-card anim d2"><div class="sem-num">02</div><div class="sem-icon-wrap si-2">🔩</div><div class="sem-label">Semester 2</div><div class="sem-name">Mechanics & Programming</div><div class="sem-sub-count">6 Subjects</div><div class="sem-prog-wrap"><div class="sem-prog"><div class="sem-prog-bar" data-w="65" style="width:0"></div></div><div class="sem-prog-pct">65%</div></div></div>
+            <div class="sem-card anim d3"><div class="sem-num">03</div><div class="sem-icon-wrap si-3">🌡️</div><div class="sem-label">Semester 3</div><div class="sem-name">Thermo & Fluids</div><div class="sem-sub-count">6 Subjects</div><div class="sem-prog-wrap"><div class="sem-prog"><div class="sem-prog-bar" data-w="50" style="width:0"></div></div><div class="sem-prog-pct">50%</div></div></div>
+            <div class="sem-card anim d4"><div class="sem-num">04</div><div class="sem-icon-wrap si-4">🔥</div><div class="sem-label">Semester 4</div><div class="sem-name">Boilers & Machines</div><div class="sem-sub-count">6 Subjects</div><div class="sem-prog-wrap"><div class="sem-prog"><div class="sem-prog-bar" data-w="35" style="width:0"></div></div><div class="sem-prog-pct">35%</div></div></div>
+            <div class="sem-card anim d5"><div class="sem-num">05</div><div class="sem-icon-wrap si-5">🚢</div><div class="sem-label">Semester 5</div><div class="sem-name">Marine Diesel Core</div><div class="sem-sub-count">6 Subjects</div><div class="sem-prog-wrap"><div class="sem-prog"><div class="sem-prog-bar" data-w="20" style="width:0"></div></div><div class="sem-prog-pct">20%</div></div></div>
+            <div class="sem-card anim d6"><div class="sem-num">06</div><div class="sem-icon-wrap si-6">🛡️</div><div class="sem-label">Semester 6</div><div class="sem-name">Construction & Safety</div><div class="sem-sub-count">6 Subjects</div><div class="sem-prog-wrap"><div class="sem-prog"><div class="sem-prog-bar" data-w="10" style="width:0"></div></div><div class="sem-prog-pct">10%</div></div></div>
+            <div class="sem-card anim d7"><div class="sem-num">07</div><div class="sem-icon-wrap si-7">🌊</div><div class="sem-label">Semester 7</div><div class="sem-name">Propulsion & Environment</div><div class="sem-sub-count">6 Subjects</div><div class="sem-prog-wrap"><div class="sem-prog"><div class="sem-prog-bar" data-w="5" style="width:0"></div></div><div class="sem-prog-pct">5%</div></div></div>
+            <div class="sem-card anim d8"><div class="sem-num">08</div><div class="sem-icon-wrap si-8">🎓</div><div class="sem-label">Semester 8</div><div class="sem-name">Competency & Project</div><div class="sem-sub-count">6 Subjects</div><div class="sem-prog-wrap"><div class="sem-prog"><div class="sem-prog-bar" data-w="0" style="width:0"></div></div><div class="sem-prog-pct">0%</div></div></div>
+        </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="section" id="feats">
+        <div class="section-header anim">
+            <div class="section-tag">Platform Capabilities</div>
+            <h2 class="section-title">Built for Marine Engineers</h2>
+            <p class="section-desc">Every tool designed specifically for marine engineering students and DGS exam aspirants.</p>
+        </div>
+        <div class="feat-grid">
+            <div class="feat-card anim d1">
+                <div class="feat-icon fi-1">📖</div>
+                <div><div class="feat-title">Chapter-Wise Summaries</div><div class="feat-desc">Every subject broken into clear, concise chapters with 200-word summaries, real ship examples, and important terminology highlighted for quick learning.</div></div>
+            </div>
+            <div class="feat-card anim d2">
+                <div class="feat-icon fi-2">🤖</div>
+                <div><div class="feat-title">AI Doubt Assistant</div><div class="feat-desc">Ask any question about any chapter and get instant, accurate answers. Our AI understands marine engineering context and gives practical explanations.</div></div>
+            </div>
+            <div class="feat-card anim d3">
+                <div class="feat-icon fi-3">✍️</div>
+                <div><div class="feat-title">Practice Quizzes</div><div class="feat-desc">MCQs, short answers, and descriptive questions for every chapter with instant feedback, answer explanations, and score tracking across semesters.</div></div>
+            </div>
+            <div class="feat-card anim d4">
+                <div class="feat-icon fi-4">🎤</div>
+                <div><div class="feat-title">DGS Oral Preparation</div><div class="feat-desc">Simulated oral exam questions based on real DGS surveyor patterns. Practice with model answers, common mistakes to avoid, and scenario-based questions.</div></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CHAPTER DEMO -->
+    <section class="section" id="demo">
+        <div class="section-header anim">
+            <div class="section-tag">Experience It</div>
+            <h2 class="section-title">Chapter Learning Preview</h2>
+            <p class="section-desc">This is how studying feels on MarineLearn. Clean, focused, effective.</p>
+        </div>
+        <div class="chap-preview anim">
+            <div class="chap-topbar">
+                <div class="chap-breadcrumb">Sem 5 → Marine Diesel Engines I → <b>Ch 3: Running Gear</b></div>
+                <button class="chap-complete-btn">✓ Mark Complete</button>
+            </div>
+            <div class="chap-layout">
+                <div class="chap-content">
+                    <h2 class="chap-h">Chapter 3: Running Gear</h2>
+                    <div class="chap-meta">
+                        <div class="chap-meta-item">⏱ 25 min read</div>
+                        <div class="chap-meta-item">📚 8 Topics</div>
+                        <div class="chap-meta-item" style="color:var(--accent-1)">● Intermediate</div>
+                    </div>
+                    <div class="chap-tabs">
+                        <button class="ctab on" data-t="s2">Summary</button>
+                        <button class="ctab" data-t="k2">Key Points</button>
+                        <button class="ctab" data-t="q2">Quiz</button>
+                    </div>
+                    <div class="ctab-body on" id="s2">
+                        <p class="summary-p">The <span class="hl">running gear</span> of a marine diesel engine includes all components that convert the reciprocating motion of the piston into the rotary motion of the crankshaft. Key components include the <span class="hl">crankshaft</span> (semi-built or fully-built), <span class="hl">connecting rod</span>, <span class="hl">crosshead</span> (in 2-stroke slow-speed engines), and <span class="hl">piston</span> with its rod and rings.</p>
+                        <br>
+                        <p class="summary-p">In large 2-stroke crosshead engines like the <span class="hl">MAN B&W ME series</span>, the piston rod passes through a <span class="hl">stuffing box</span> that separates the scavenge space from the crankcase. This design allows different lubricants for cylinder and crankcase, preventing contamination.</p>
+                        <div class="summary-box"><strong>🚢 Real Ship Example:</strong> On a MAN B&W 6S50ME-C engine aboard a Panamax bulk carrier, the crankshaft weighs approximately 120 tonnes. During major overhaul at 16,000 running hours, crankshaft deflections are measured to detect misalignment.</div>
+                    </div>
+                    <div class="ctab-body" id="k2">
+                        <div class="kp-item"><div class="kp-check" onclick="this.classList.toggle('done')"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div class="kp-txt"><b>Crankshaft types:</b> Semi-built (shrink-fit) most common in large marine engines. Fully-built uses separate webs, pins, journals bolted together.</div></div>
+                        <div class="kp-item"><div class="kp-check" onclick="this.classList.toggle('done')"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div class="kp-txt"><b>Connecting rod:</b> Transmits force from crosshead to crankpin. Forged steel construction. Bottom end has white metal or tri-metal bearing shells.</div></div>
+                        <div class="kp-item"><div class="kp-check" onclick="this.classList.toggle('done')"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div class="kp-txt"><b>Crosshead purpose:</b> Only in 2-stroke engines. Absorbs side thrust preventing it from acting on cylinder liner. Has guide shoes and pin bearing.</div></div>
+                        <div class="kp-item"><div class="kp-check" onclick="this.classList.toggle('done')"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div class="kp-txt"><b>Piston cooling:</b> Large engines use bore cooling or jet/cocktail shaker cooling with system oil or separate cooling oil circuit.</div></div>
+                        <div class="kp-item"><div class="kp-check" onclick="this.classList.toggle('done')"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div class="kp-txt"><b>Deflection readings:</b> Measured at 5 positions (TDC, BDC, Port, Starboard, and halfway). Excess deflection indicates misalignment.</div></div>
+                    </div>
+                    <div class="ctab-body" id="q2">
+                        <div class="quiz-block">
+                            <div class="quiz-q"><div class="quiz-num">1</div><div class="quiz-text">What is the primary purpose of a crosshead in a 2-stroke marine diesel engine?</div></div>
+                            <div class="quiz-opts">
+                                <div class="quiz-opt" data-correct="false"><div class="opt-circle">A</div><span>To increase compression ratio</span></div>
+                                <div class="quiz-opt" data-correct="true"><div class="opt-circle">B</div><span>To absorb side thrust and prevent it from acting on cylinder liner</span></div>
+                                <div class="quiz-opt" data-correct="false"><div class="opt-circle">C</div><span>To reduce reciprocating mass</span></div>
+                                <div class="quiz-opt" data-correct="false"><div class="opt-circle">D</div><span>To improve fuel injection timing</span></div>
+                            </div>
+                        </div>
+                        <div class="quiz-block">
+                            <div class="quiz-q"><div class="quiz-num">2</div><div class="quiz-text">Which crankshaft construction is most common in large marine slow-speed engines?</div></div>
+                            <div class="quiz-opts">
+                                <div class="quiz-opt" data-correct="false"><div class="opt-circle">A</div><span>Fully-built crankshaft</span></div>
+                                <div class="quiz-opt" data-correct="false"><div class="opt-circle">B</div><span>Solid forged crankshaft</span></div>
+                                <div class="quiz-opt" data-correct="true"><div class="opt-circle">C</div><span>Semi-built crankshaft (shrink-fit)</span></div>
+                                <div class="quiz-opt" data-correct="false"><div class="opt-circle">D</div><span>Welded crankshaft</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="chap-side">
+                    <div class="side-label">AI Assistant</div>
+                    <div class="ai-box">
+                        <div class="ai-input-row">
+                            <input class="ai-inp" placeholder="Ask about running gear..." id="ai2">
+                            <button class="ai-send" onclick="aiDemo2()"><svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+                        </div>
+                        <div class="ai-reply" id="aiR2"><div class="ai-reply-tag">MarineLearn AI</div><div id="aiT2"></div></div>
+                    </div>
+                    <div style="margin-top:8px"></div>
+                    <div class="side-label">Chapters</div>
+                    <div class="ch-nav-item did"><span class="ch-n">01</span>Engine Construction</div>
+                    <div class="ch-nav-item did"><span class="ch-n">02</span>Bedplate & Frame</div>
+                    <div class="ch-nav-item now"><span class="ch-n">03</span>Running Gear</div>
+                    <div class="ch-nav-item"><span class="ch-n">04</span>Fuel Injection</div>
+                    <div class="ch-nav-item"><span class="ch-n">05</span>Starting & Reversing</div>
+                    <div class="ch-nav-item"><span class="ch-n">06</span>Scavenging</div>
+                    <div class="ch-nav-item"><span class="ch-n">07</span>Lubrication</div>
+                    <div class="ch-nav-item"><span class="ch-n">08</span>Cooling Systems</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-inner">
             <div>
-                <div class="terminal">
-                    <div class="term-bar">
-                        <div class="term-dot td-r"></div><div class="term-dot td-y"></div><div class="term-dot td-g"></div>
-                        <div class="term-title">marinelearn@engine-room:~</div>
-                    </div>
-                    <div class="term-body">
-                        <div class="term-line"><span class="term-prompt">$</span><span class="term-cmd">marinelearn --load semester 5</span></div>
-                        <div class="term-output term-success">✓ Semester 5 loaded — 6 subjects, 55 chapters</div>
-                        <br>
-                        <div class="term-line"><span class="term-prompt">$</span><span class="term-cmd">study "Marine Diesel Engines I"</span></div>
-                        <div class="term-output">Loading chapter 3: <span class="term-highlight">Running Gear</span></div>
-                        <div class="term-output term-success">✓ Summary ready</div>
-                        <div class="term-output term-success">✓ 15 key points loaded</div>
-                        <div class="term-output term-success">✓ 20 practice questions ready</div>
-                        <div class="term-output term-success">✓ AI assistant online</div>
-                        <br>
-                        <div class="term-line"><span class="term-prompt">$</span><span class="term-cmd">progress --check</span></div>
-                        <div class="term-output">Overall: <span class="term-warn">42%</span> complete</div>
-                        <div class="term-output">Streak: <span class="term-highlight">12 days</span></div>
-                        <div class="term-output">Next: Ch 4 — Fuel Injection System</div>
-                        <br>
-                        <div class="term-line"><span class="term-prompt">$</span><span class="term-cmd">ai ask "What is stuffing box?"</span></div>
-                        <div class="term-output term-success">✓ AI: The stuffing box seals the scavenge space from the crankcase in 2-stroke crosshead engines...</div>
-                        <br>
-                        <div class="term-line"><span class="term-prompt">$</span><span class="cursor-blink"></span></div>
-                    </div>
-                </div>
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px"><div class="nav-brand-icon" style="width:28px;height:28px;font-size:14px">M</div><div class="nav-brand-text" style="font-size:16px">Marine<span>Learn</span></div></div>
+                <p class="footer-brand-desc">AI-powered learning platform for B.Tech Marine Engineering students. Built for exam success and DGS competency preparation.</p>
             </div>
+            <div><div class="footer-h">Quick Links</div><ul class="footer-list"><li><a href="#">All Semesters</a></li><li><a href="#">DGS Oral Prep</a></li><li><a href="#">Formula Handbook</a></li><li><a href="#">Diagram Bank</a></li></ul></div>
+            <div><div class="footer-h">Resources</div><ul class="footer-list"><li><a href="#">Question Papers</a></li><li><a href="#">Career Guide</a></li><li><a href="#">Study Plans</a></li><li><a href="#">Revision Cards</a></li></ul></div>
+            <div><div class="footer-h">Connect</div><ul class="footer-list"><li><a href="#">Telegram</a></li><li><a href="#">Instagram</a></li><li><a href="#">YouTube</a></li><li><a href="#">LinkedIn</a></li></ul></div>
         </div>
-    </section>
-
-    <section class="sec" id="sem4">
-        <div class="sec-head rv"><div class="sec-tag">CURRICULUM</div><h2 class="sec-h">Choose Your Semester</h2><p class="sec-sub">Navigate 8 semesters of structured marine engineering curriculum.</p></div>
-        <div class="sg">
-            <div class="sc rv r1"><div class="sc-top"><div class="sc-num">SEM_01</div><div class="sc-emoji">⚛️</div></div><div class="sc-name">Engineering Foundations</div><div class="sc-desc">7 Subjects • Math, Physics, Chemistry</div><div class="sc-bar"><div class="sc-fill" data-w="80" style="width:0"></div></div><div class="sc-pct">80%</div></div>
-            <div class="sc rv r2"><div class="sc-top"><div class="sc-num">SEM_02</div><div class="sc-emoji">🔩</div></div><div class="sc-name">Mechanics & Code</div><div class="sc-desc">6 Subjects • Statics, Dynamics, C</div><div class="sc-bar"><div class="sc-fill" data-w="65" style="width:0"></div></div><div class="sc-pct">65%</div></div>
-            <div class="sc rv r3"><div class="sc-top"><div class="sc-num">SEM_03</div><div class="sc-emoji">🌡️</div></div><div class="sc-name">Thermo & Fluids</div><div class="sc-desc">6 Subjects • Heat Transfer, Fluids</div><div class="sc-bar"><div class="sc-fill" data-w="50" style="width:0"></div></div><div class="sc-pct">50%</div></div>
-            <div class="sc rv r4"><div class="sc-top"><div class="sc-num">SEM_04</div><div class="sc-emoji">🔥</div></div><div class="sc-name">Boilers & Machines</div><div class="sc-desc">6 Subjects • Steam, Electrical</div><div class="sc-bar"><div class="sc-fill" data-w="35" style="width:0"></div></div><div class="sc-pct">35%</div></div>
-            <div class="sc rv r5"><div class="sc-top"><div class="sc-num">SEM_05</div><div class="sc-emoji">🚢</div></div><div class="sc-name">Marine Diesel Core</div><div class="sc-desc">6 Subjects • Engines, Nav Arch</div><div class="sc-bar"><div class="sc-fill" data-w="20" style="width:0"></div></div><div class="sc-pct">20%</div></div>
-            <div class="sc rv r6"><div class="sc-top"><div class="sc-num">SEM_06</div><div class="sc-emoji">🛡️</div></div><div class="sc-name">Construction & Safety</div><div class="sc-desc">6 Subjects • Ship Build, Fire</div><div class="sc-bar"><div class="sc-fill" data-w="10" style="width:0"></div></div><div class="sc-pct">10%</div></div>
-            <div class="sc rv r7"><div class="sc-top"><div class="sc-num">SEM_07</div><div class="sc-emoji">🌊</div></div><div class="sc-name">Propulsion & Enviro</div><div class="sc-desc">6 Subjects • Propulsion, MARPOL</div><div class="sc-bar"><div class="sc-fill" data-w="5" style="width:0"></div></div><div class="sc-pct">5%</div></div>
-            <div class="sc rv r8"><div class="sc-top"><div class="sc-num">SEM_08</div><div class="sc-emoji">🎓</div></div><div class="sc-name">Competency & Project</div><div class="sc-desc">6 Subjects • ERS, Final Project</div><div class="sc-bar"><div class="sc-fill" data-w="0" style="width:0"></div></div><div class="sc-pct">0%</div></div>
-        </div>
-    </section>
-
-    <section class="sec" id="feat4">
-        <div class="sec-head rv"><div class="sec-tag">CAPABILITIES</div><h2 class="sec-h">Engineering-Grade Tools</h2><p class="sec-sub">Purpose-built features for marine engineering students.</p></div>
-        <div class="fg">
-            <div class="fc rv r1"><div class="fc-icon fci-1">📖</div><div><div class="fc-title">Chapter Summaries</div><div class="fc-desc">200-word summaries with real ship examples and highlighted marine terminology for each chapter.</div></div></div>
-            <div class="fc rv r2"><div class="fc-icon fci-2">🤖</div><div><div class="fc-title">AI Assistant</div><div class="fc-desc">Ask any doubt about any chapter. Instant, accurate explanations in simple conversational language.</div></div></div>
-            <div class="fc rv r3"><div class="fc-icon fci-3">✍️</div><div><div class="fc-title">Practice Quizzes</div><div class="fc-desc">MCQs and descriptive questions for every chapter with instant feedback and score tracking.</div></div></div>
-            <div class="fc rv r4"><div class="fc-icon fci-4">🎤</div><div><div class="fc-title">DGS Oral Prep</div><div class="fc-desc">Simulated oral questions based on real DGS surveyor patterns with model answers.</div></div></div>
-        </div>
-    </section>
-
-    <section class="sec" id="demo4">
-        <div class="sec-head rv"><div class="sec-tag">PREVIEW</div><h2 class="sec-h">Chapter Demo</h2><p class="sec-sub">See how studying works on MarineLearn.</p></div>
-        <div class="demo rv">
-            <div class="demo-bar">
-                <div class="demo-bc">sem_05 / diesel_engines_1 / <b>ch_03_running_gear</b></div>
-                <button class="demo-ok">✓ COMPLETE</button>
-            </div>
-            <div class="demo-grid">
-                <div class="demo-main">
-                    <h2 class="demo-title">Ch 3: Running Gear</h2>
-                    <div class="demo-meta"><span>⏱ 25 min</span><span>📚 8 topics</span><span style="color:var(--blue)">● INTERMEDIATE</span></div>
-                    <div class="demo-tabs">
-                        <button class="dtab on" data-t="s4">Summary</button>
-                        <button class="dtab" data-t="k4">Key Points</button>
-                        <button class="dtab" data-t="q4">Quiz</button>
-                    </div>
-                    <div class="dtc on" id="s4">
-                        <p class="sp">The <span class="h">running gear</span> converts piston reciprocating motion into crankshaft rotation. Components: <span class="h">crankshaft</span> (semi-built/fully-built), <span class="h">connecting rod</span>, <span class="h">crosshead</span> (2-stroke), <span class="h">piston</span> with rod and rings, <span class="h">stuffing box</span>.</p><br>
-                        <p class="sp">In <span class="h">MAN B&W ME engines</span>, the piston rod passes through a stuffing box separating scavenge space from crankcase, allowing different lubricants and preventing contamination.</p>
-                        <div class="s-box"><strong>🚢 Example:</strong> MAN B&W 6S50ME-C — crankshaft ~120 tonnes. Deflections checked at 16,000 hr overhaul.</div>
-                    </div>
-                    <div class="dtc" id="k4">
-                        <div class="ki"><div class="kc" onclick="this.classList.toggle('on')"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div class="kt"><b>Semi-built crankshaft:</b> Shrink-fit assembly — most common in large 2-stroke engines.</div></div>
-                        <div class="ki"><div class="kc" onclick="this.classList.toggle('on')"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div class="kt"><b>Crosshead:</b> Absorbs side thrust, prevents cylinder liner wear. Only in 2-stroke crosshead engines.</div></div>
-                        <div class="ki"><div class="kc" onclick="this.classList.toggle('on')"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div class="kt"><b>Connecting rod:</b> Forged steel, transmits force from crosshead to crankpin with white metal bearings.</div></div>
-                        <div class="ki"><div class="kc" onclick="this.classList.toggle('on')"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div class="kt"><b>Piston cooling:</b> Bore cooling or jet cooling. Coolant: system oil or separate circuit.</div></div>
-                        <div class="ki"><div class="kc" onclick="this.classList.toggle('on')"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div><div class="kt"><b>Deflection readings:</b> 5 positions per unit. Excess → bearing misalignment → realign.</div></div>
-                    </div>
-                    <div class="dtc" id="q4">
-                        <div class="qb"><div class="qq"><div class="qn">01</div><div class="qt">Primary purpose of crosshead in 2-stroke engine?</div></div>
-                            <div class="qos">
-                                <div class="qo" data-c="0"><div class="ol">A</div>Increase compression</div>
-                                <div class="qo" data-c="1"><div class="ol">B</div>Absorb side thrust from liner</div>
-                                <div class="qo" data-c="0"><div class="ol">C</div>Reduce weight</div>
-                                <div class="qo" data-c="0"><div class="ol">D</div>Improve injection</div>
-                            </div></div>
-                        <div class="qb"><div class="qq"><div class="qn">02</div><div class="qt">Most common crankshaft type in large marine engines?</div></div>
-                            <div class="qos">
-                                <div class="qo" data-c="0"><div class="ol">A</div>Fully-built</div>
-                                <div class="qo" data-c="1"><div class="ol">B</div>Semi-built (shrink-fit)</div>
-                                <div class="qo" data-c="0"><div class="ol">C</div>Solid forged</div>
-                                <div class="qo" data-c="0"><div class="ol">D</div>Welded</div>
-                            </div></div>
-                    </div>
-                </div>
-                <div class="demo-side">
-                    <div class="ds-h">AI_ASSISTANT</div>
-                    <div class="ai-b"><div class="ai-r"><input class="ai-i" placeholder="ask about running gear..." id="ai4"><button class="ai-s" onclick="aiD4()"><svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button></div>
-                    <div class="ai-ans" id="ar4"><div class="ai-t">MARINELEARN_AI</div><div id="at4"></div></div></div>
-                    <div class="ds-h">CHAPTERS</div>
-                    <div class="ci did"><span class="cn">01</span>Engine Construction</div>
-                    <div class="ci did"><span class="cn">02</span>Bedplate & Frame</div>
-                    <div class="ci now"><span class="cn">03</span>Running Gear</div>
-                    <div class="ci"><span class="cn">04</span>Fuel Injection</div>
-                    <div class="ci"><span class="cn">05</span>Starting & Reversing</div>
-                    <div class="ci"><span class="cn">06</span>Scavenging</div>
-                    <div class="ci"><span class="cn">07</span>Lubrication</div>
-                    <div class="ci"><span class="cn">08</span>Cooling Systems</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <footer class="ft">
-        <div class="ft-inner">
-            <div><div style="display:flex;align-items:center;gap:10px"><div class="nav-logo-box" style="width:26px;height:26px;border-width:1.5px"></div><div class="nav-brand" style="font-size:15px">Marine<span>Learn</span></div></div><p class="ft-desc">AI-powered platform for B.Tech Marine Engineering. Structured learning + DGS prep.</p></div>
-            <div><div class="ft-h">LINKS</div><ul class="ft-list"><li><a href="#">Semesters</a></li><li><a href="#">DGS Prep</a></li><li><a href="#">Formulas</a></li><li><a href="#">Diagrams</a></li></ul></div>
-            <div><div class="ft-h">RESOURCES</div><ul class="ft-list"><li><a href="#">Papers</a></li><li><a href="#">Careers</a></li><li><a href="#">Plans</a></li><li><a href="#">Cards</a></li></ul></div>
-            <div><div class="ft-h">CONNECT</div><ul class="ft-list"><li><a href="#">Telegram</a></li><li><a href="#">Instagram</a></li><li><a href="#">YouTube</a></li><li><a href="#">LinkedIn</a></li></ul></div>
-        </div>
-        <div class="ft-bot"><span>© 2025 MarineLearn AI</span><span>// built_for_engineers ⚓</span></div>
+        <div class="footer-bottom"><span>© 2025 MarineLearn AI</span><span>Made for Marine Engineers ⚓</span></div>
     </footer>
 
     <script>
-        const ro=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting){el.target.classList.add('vis');el.target.querySelectorAll('[data-w]').forEach(b=>setTimeout(()=>b.style.width=b.dataset.w+'%',500))}}),{threshold:.12});
-        document.querySelectorAll('.rv').forEach(el=>ro.observe(el));
-        document.querySelectorAll('.dtab').forEach(t=>t.addEventListener('click',()=>{document.querySelectorAll('.dtab').forEach(x=>x.classList.remove('on'));document.querySelectorAll('.dtc').forEach(x=>x.classList.remove('on'));t.classList.add('on');document.getElementById(t.dataset.t).classList.add('on')}));
-        document.querySelectorAll('.qo').forEach(o=>o.addEventListener('click',function(){const p=this.closest('.qos');if(p.querySelector('.y')||p.querySelector('.n'))return;if(this.dataset.c==='1')this.classList.add('y');else{this.classList.add('n');p.querySelectorAll('.qo').forEach(x=>{if(x.dataset.c==='1')x.classList.add('y')})}}));
-        function aiD4(){const i=document.getElementById('ai4'),r=document.getElementById('ar4'),t=document.getElementById('at4');if(!i.value.trim())return;r.style.display='block';t.innerHTML='<em>processing...</em>';setTimeout(()=>{t.innerHTML='<b>Result:</b> The crosshead in 2-stroke engines absorbs side thrust, protecting the cylinder liner. Connected to piston rod above and con-rod below via a pin bearing with guide shoes on rails.'},1000);i.value=''}
-        document.getElementById('ai4').addEventListener('keypress',e=>{if(e.key==='Enter')aiD4()});
+        window.addEventListener('load',()=>setTimeout(()=>document.getElementById('loader').classList.add('hide'),1200));
+
+        // Scroll reveal
+        const obs=new IntersectionObserver(e=>e.forEach(el=>{if(el.isIntersecting){el.target.classList.add('show');
+            el.target.querySelectorAll('[data-w]').forEach(b=>setTimeout(()=>b.style.width=b.dataset.w+'%',400));
+            el.target.querySelectorAll('[data-c]').forEach(n=>countUp(n));
+        }}),{threshold:.15});
+        document.querySelectorAll('.anim').forEach(el=>obs.observe(el));
+
+        function countUp(el){const t=+el.dataset.c,d=1800,s=t/(d/16);let c=0;const i=setInterval(()=>{c+=s;if(c>=t){c=t;clearInterval(i)}el.textContent=Math.floor(c)+'+'},16)}
+
+        // Dashboard progress
+        setTimeout(()=>document.querySelectorAll('.dash-prog-fill[data-w]').forEach(b=>b.style.width=b.dataset.w+'%'),1500);
+        // Semester progress
+        setTimeout(()=>document.querySelectorAll('.sem-prog-bar[data-w]').forEach(b=>b.style.width=b.dataset.w+'%'),2000);
+
+        // Tabs
+        document.querySelectorAll('.ctab').forEach(t=>t.addEventListener('click',()=>{
+            document.querySelectorAll('.ctab').forEach(x=>x.classList.remove('on'));
+            document.querySelectorAll('.ctab-body').forEach(x=>x.classList.remove('on'));
+            t.classList.add('on');
+            document.getElementById(t.dataset.t).classList.add('on');
+        }));
+
+        // Quiz
+        document.querySelectorAll('.quiz-opt').forEach(o=>o.addEventListener('click',function(){
+            const p=this.closest('.quiz-opts');
+            if(p.querySelector('.right')||p.querySelector('.nope'))return;
+            if(this.dataset.correct==='true'){this.classList.add('right')}
+            else{this.classList.add('nope');p.querySelectorAll('.quiz-opt').forEach(x=>{if(x.dataset.correct==='true')x.classList.add('right')})}
+        }));
+
+        // AI Demo
+        function aiDemo2(){const i=document.getElementById('ai2'),r=document.getElementById('aiR2'),t=document.getElementById('aiT2');
+            if(!i.value.trim())return;r.style.display='block';t.innerHTML='<em>Analyzing...</em>';
+            setTimeout(()=>{t.innerHTML='<b>Great question!</b> The crosshead in a 2-stroke engine absorbs side thrust that would otherwise damage the cylinder liner. It separates combustion space from crankcase via the stuffing box, allowing different lubricants for each.'},1000);i.value=''}
+        document.getElementById('ai2').addEventListener('keypress',e=>{if(e.key==='Enter')aiDemo2()});
     </script>
 </body>
 </html>
